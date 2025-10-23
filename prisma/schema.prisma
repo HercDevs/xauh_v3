@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +8,138 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ============================================
+// RAW TABLES (Staging Layer)
+// ============================================
+
+model RawXPost {
+  id            String   @id @default(cuid())
+  postId        String   @unique
+  createdAt     DateTime
+  text          String
+  url           String
+  impressions   Int      @default(0)
+  likes         Int      @default(0)
+  replies       Int      @default(0)
+  reposts       Int      @default(0)
+  linkClicks    Int      @default(0)
+  fetchedAt     DateTime @default(now())
+
+  @@map("raw_x_posts")
+}
+
+model RawTelegramMessage {
+  id          String   @id @default(cuid())
+  messageId   Int      @unique
+  postedAt    DateTime
+  text        String
+  views       Int      @default(0)
+  forwards    Int      @default(0)
+  fetchedAt   DateTime @default(now())
+
+  @@map("raw_telegram_messages")
+}
+
+model RawWebEvent {
+  id          String   @id @default(cuid())
+  sessionId   String
+  eventType   String
+  path        String?
+  referrer    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  utmTerm     String?
+  elementId   String?
+  label       String?
+  href        String?
+  createdAt   DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([eventType])
+  @@map("raw_web_events")
+}
+
+model RawSwap {
+  id          String   @id @default(cuid())
+  txHash      String   @unique
+  wallet      String
+  side        String
+  amountIn    Float
+  amountOut   Float
+  tonValueUsd Float
+  swapAt      DateTime
+  fetchedAt   DateTime @default(now())
+
+  @@index([wallet])
+  @@index([swapAt])
+  @@map("raw_swaps")
+}
+
+// ============================================
+// CANONICAL TABLES (Cleaned Data)
+// ============================================
+
+model Post {
+  id          String   @id @default(cuid())
+  channel     String   // 'X' or 'TG'
+  externalId  String   @unique
+  postedAt    DateTime
+  permalink   String
+  text        String
+
+  @@index([channel])
+  @@index([postedAt])
+  @@map("posts")
+}
+
+model Session {
+  id                String      @id @default(cuid())
+  sessionId         String      @unique
+  firstUtmSource    String?
+  firstUtmMedium    String?
+  firstUtmCampaign  String?
+  firstUtmContent   String?
+  firstUtmTerm      String?
+  firstReferrer     String?
+  firstLandingPath  String?
+  firstLandingAt    DateTime
+  clickouts         Clickout[]
+
+  @@map("sessions")
+}
+
+model Clickout {
+  id          String   @id @default(cuid())
+  clickId     String   @unique
+  sessionId   String
+  dest        String
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  createdAt   DateTime
+
+  session     Session  @relation(fields: [sessionId], references: [sessionId])
+
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("clickouts")
+}
+
+model Swap {
+  id          String   @id @default(cuid())
+  txHash      String   @unique
+  wallet      String
+  side        String
+  amountIn    Float
+  amountOut   Float
+  tonValueUsd Float
+  swapAt      DateTime
+
+  @@index([wallet])
+  @@index([swapAt])
+  @@map("swaps")
 }
