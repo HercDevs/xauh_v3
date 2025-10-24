@@ -1,4 +1,6 @@
 {
   "/page": "app/page.js",
-  "/test/page": "app/test/page.js"
+  "/api/stats/route": "app/api/stats/route.js",
+  "/test/page": "app/test/page.js",
+  "/api/timeseries/route": "app/api/timeseries/route.js"
 }
