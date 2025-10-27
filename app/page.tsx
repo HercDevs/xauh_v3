@@ -8,7 +8,9 @@ interface Stats {
   sessions: number
   clickouts: number
   swaps: number
-  volume: number
+  volumeUsd: number
+  volumeCoins: number
+  sessionsByWebsite: Record<string, number>
   conversionRates: {
     sessionToClickout: number
     clickoutToSwap: number
@@ -90,11 +92,9 @@ export default function Dashboard() {
             subtitle="X + Telegram"
             variant="primary"
           />
-          <KPICard
-            title="Sessions"
-            value={stats.sessions}
-            subtitle="Website visits"
-            variant="secondary"
+          <SessionsCard
+            total={stats.sessions}
+            breakdown={stats.sessionsByWebsite}
           />
           <KPICard
             title="Clickouts"
@@ -108,11 +108,9 @@ export default function Dashboard() {
             subtitle="Completed"
             variant="highlight"
           />
-          <KPICard
-            title="Volume"
-            value={`$${stats.volume.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-            subtitle="Total USD"
-            variant="gold"
+          <VolumeCard
+            usd={stats.volumeUsd}
+            coins={stats.volumeCoins}
           />
         </div>
 
@@ -252,6 +250,67 @@ function KPICard({
       </div>
       <div className="text-xs opacity-75" style={{ color: colors.text }}>
         {subtitle}
+      </div>
+    </div>
+  )
+}
+
+function SessionsCard({ 
+  total, 
+  breakdown 
+}: { 
+  total: number
+  breakdown: Record<string, number>
+}) {
+  return (
+    <div 
+      className="border-2 rounded-lg p-6"
+      style={{ 
+        backgroundColor: '#1a2942', 
+        borderColor: '#2a4a7c' 
+      }}
+    >
+      <div className="text-sm font-medium opacity-75 mb-1" style={{ color: '#b8965f' }}>
+        Sessions
+      </div>
+      <div className="text-3xl font-bold mb-2" style={{ color: '#b8965f' }}>
+        {total}
+      </div>
+      <div className="text-xs space-y-1" style={{ color: '#b8965f' }}>
+        {Object.entries(breakdown).map(([site, count]) => (
+          <div key={site} className="flex justify-between">
+            <span className="opacity-75">{site}:</span>
+            <span className="font-semibold">{count}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function VolumeCard({ 
+  usd, 
+  coins 
+}: { 
+  usd: number
+  coins: number
+}) {
+  return (
+    <div 
+      className="border-2 rounded-lg p-6"
+      style={{ 
+        backgroundColor: '#2a3f5f', 
+        borderColor: '#d4af37' 
+      }}
+    >
+      <div className="text-sm font-medium opacity-75 mb-1" style={{ color: '#d4af37' }}>
+        Volume
+      </div>
+      <div className="text-2xl font-bold mb-1" style={{ color: '#d4af37' }}>
+        ${usd.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+      </div>
+      <div className="text-lg font-semibold" style={{ color: '#b8965f' }}>
+        {coins.toLocaleString(undefined, { maximumFractionDigits: 2 })} XAUH
       </div>
     </div>
   )
