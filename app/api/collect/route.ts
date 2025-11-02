@@ -4,6 +4,18 @@ import { prisma } from '@/lib/prisma'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
+// CORS headers to allow requests from Herculis websites
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+}
+
+// Handle OPTIONS request for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return NextResponse.json({}, { headers: corsHeaders })
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -27,7 +39,7 @@ export async function POST(request: NextRequest) {
     if (!sessionId || !eventType) {
       return NextResponse.json(
         { error: 'Missing required fields: sessionId, eventType' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       )
     }
 
@@ -89,12 +101,12 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true }, { headers: corsHeaders })
   } catch (error) {
     console.error('Error collecting event:', error)
     return NextResponse.json(
       { error: 'Failed to collect event' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     )
   }
 }

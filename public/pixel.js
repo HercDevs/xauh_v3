@@ -1,7 +1,5 @@
 /**
  * XAUH Analytics Tracking Pixel
- * Embed this script on your website to track visits and conversions
- * 
  * Usage:
  * <script src="https://your-dashboard.vercel.app/pixel.js"></script>
  */
