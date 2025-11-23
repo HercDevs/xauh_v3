@@ -9,17 +9,19 @@ export async function GET() {
     // Get overall KPIs
     const [
       totalPosts,
-      allSessions,
+      allWebEvents,
       totalClickouts,
       totalSwaps,
       volumeData,
       coinVolumeData,
     ] = await Promise.all([
       prisma.post.count(),
-      prisma.session.findMany({
+      prisma.rawWebEvent.findMany({
+        where: {
+          eventType: 'page_view',
+        },
         select: {
-          firstReferrer: true,
-          firstLandingPath: true,
+          sessionId: true,
         },
       }),
       prisma.clickout.count(),
@@ -36,7 +38,16 @@ export async function GET() {
       }),
     ])
 
-    // Categorize sessions by website based on referrer or landing path
+    // Get unique sessions from web events
+    const uniqueSessions = new Map<string, string>()
+    allWebEvents.forEach(event => {
+      if (!uniqueSessions.has(event.sessionId)) {
+        const hostname = 'unknown'
+        uniqueSessions.set(event.sessionId, hostname)
+      }
+    })
+  
+    // Categorize sessions by website based on hostname
     const sessionsByWebsite: Record<string, number> = {
       'xauh.gold': 0,
       'herculis.gold': 0,
@@ -44,22 +55,19 @@ export async function GET() {
       'Other': 0,
     }
 
-    allSessions.forEach(session => {
-      const referrer = session.firstReferrer || ''
-      const path = session.firstLandingPath || ''
-      
-      if (referrer.includes('xauh.gold') || path.includes('xauh')) {
+    uniqueSessions.forEach((hostname, sessionId) => {
+      if (hostname.includes('xauh.gold')) {
         sessionsByWebsite['xauh.gold']++
-      } else if (referrer.includes('herculis.gold') || path.includes('herculis.gold')) {
+      } else if (hostname.includes('herculis.gold')) {
         sessionsByWebsite['herculis.gold']++
-      } else if (referrer.includes('herculis.li') || path.includes('herculis.li')) {
+      } else if (hostname.includes('herculis.li')) {
         sessionsByWebsite['herculis.li']++
       } else {
         sessionsByWebsite['Other']++
       }
     })
 
-    const totalSessions = allSessions.length
+    const totalSessions = uniqueSessions.size
 
     // Calculate conversion rates
     const clickoutRate = totalSessions > 0 

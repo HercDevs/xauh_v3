@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Store raw web event
+    // Store raw web event
     await prisma.rawWebEvent.create({
       data: {
         sessionId,
@@ -60,7 +61,6 @@ export async function POST(request: NextRequest) {
         href: href || null,
       },
     })
-
     // If this is a page_view and the session doesn't exist yet, create it
     if (eventType === 'page_view') {
       const existingSession = await prisma.session.findUnique({

@@ -47,6 +47,7 @@ model RawWebEvent {
   sessionId   String
   eventType   String
   path        String?
+  hostname    String?
   referrer    String?
   utmSource   String?
   utmMedium   String?

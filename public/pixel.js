@@ -79,20 +79,21 @@
   }
 
   // Track page view
-  function trackPageView() {
-    const sessionId = getSessionId();
-    const utmParams = getUtmParams();
+function trackPageView() {
+  const sessionId = getSessionId();
+  const utmParams = getUtmParams();
 
-    const eventData = {
-      sessionId,
-      eventType: 'page_view',
-      path: window.location.pathname,
-      referrer: document.referrer || undefined,
-      ...utmParams,
-    };
+  const eventData = {
+    sessionId,
+    eventType: 'page_view',
+    path: window.location.pathname,
+    hostname: window.location.hostname, //hostname fix
+    referrer: document.referrer || undefined,
+    ...utmParams,
+  };
 
-    sendEvent(eventData);
-  }
+  sendEvent(eventData);
+}
 
   // Track DEX clickouts
   function trackDexClickouts() {
