@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       elementId,
       label,
       href,
+      hostname,
     } = body
 
     // Validate required fields
