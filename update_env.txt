@@ -1,0 +1,6 @@
+CRITICAL: Wrong XAUH token address is configured!
+
+Current (WRONG): UQCfuN2U5w9Q0TQkqc0yUq2vyVQlkK-m8FVQLzCH23sbHvbt
+Correct: EQCMk4_OujCnk46jApHnIRbmTtYTkSmfujV9X8Ye0qvsHVKh
+
+This needs to be updated in .env file!

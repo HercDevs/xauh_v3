@@ -1,0 +1,10 @@
+FOUND: Correct pool address for XAUH token
+
+Token: EQCMk4_OujCnk46jApHnIRbmTtYTkSmfujV9X8Ye0qvsHVKh
+Pool: EQ9a58a1E5a9rVYGxlxSaP/4gntQ6kBNbO6lBzjSDbX98/s
+
+Converting address format...
+0:4fae7cb51396bd5606c65c5268fff8827560ea404d6ceea50738d20db5fdf3fb
+= EQ9a58a1E5a9rVYGxlxSaP/4gntQ6kBNbO6lBzjSDbX98/s
+
+This needs to be updated in .env!

@@ -93,6 +93,7 @@ export async function POST(request: NextRequest) {
           clickId,
           sessionId,
           dest: href,
+          hostname: hostname || null,
           utmSource: utmSource || null,
           utmMedium: utmMedium || null,
           utmCampaign: utmCampaign || null,

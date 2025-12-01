@@ -118,6 +118,7 @@ model Clickout {
   clickId     String   @unique
   sessionId   String
   dest        String
+  hostname    String?
   utmSource   String?
   utmMedium   String?
   utmCampaign String?

@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import axios from 'axios'
+import { config } from 'dotenv'
+
+config({ override: true }) // Load .env file and override system env
 
 const prisma = new PrismaClient()
 
@@ -39,10 +42,16 @@ async function syncTonSwaps() {
 
     let newSwaps = 0
     let skippedSwaps = 0
+    let skippedNoHash = 0
 
     for (const tx of transactions) {
       try {
         const txHash = tx.hash
+
+        if (!txHash) {
+          skippedNoHash++
+          continue
+        }
 
         // Check if transaction already exists
         const existing = await prisma.rawSwap.findUnique({
@@ -57,28 +66,33 @@ async function syncTonSwaps() {
         // Parse transaction data
         const inMsg = tx.in_msg
         const outMsgs = tx.out_msgs || []
-        
+
         if (!inMsg || outMsgs.length === 0) {
           continue
         }
 
         // Get wallet address (sender)
         const wallet = inMsg.source?.address || 'unknown'
-        
-        // Parse amounts (simplified - actual swap parsing is more complex)
+
+        // Parse amounts
         const tonValue = parseFloat(inMsg.value || '0') / 1e9 // Convert from nanotons
-        
+
         // Determine swap side based on message flow
-        // This is simplified - production would need proper DEX message parsing
         let side = 'buy'
         let amountIn = tonValue
         let amountOut = 0
-        
+
         // Try to extract XAUH amount from output messages
+        // Look for jetton_transfer op code (0x0f8a7ea5) in decoded body
         for (const outMsg of outMsgs) {
-          if (outMsg.destination?.address === wallet) {
-            // This might be XAUH being sent back
-            amountOut = parseFloat(outMsg.value || '0') / 1e9
+          // Check if this is a jetton transfer
+          if (outMsg.decoded_body?.sum_type === 'JettonTransfer' ||
+              outMsg.decoded_op_name === 'jetton_transfer') {
+            // XAUH tokens have 18 decimals
+            const amount = outMsg.decoded_body?.value?.amount || outMsg.decoded_body?.amount
+            if (amount) {
+              amountOut = parseFloat(amount) / 1e18
+            }
           }
         }
 
@@ -107,16 +121,18 @@ async function syncTonSwaps() {
         })
 
         newSwaps++
-        console.log(`✅ New swap: ${tonValue.toFixed(2)} TON from ${wallet.substring(0, 10)}...`)
+        console.log(`✅ New swap: ${tonValue.toFixed(2)} TON from ${wallet.substring(0, 10)}... (XAUH: ${amountOut.toFixed(2)})`)
 
-      } catch (error) {
-        console.error(`❌ Error processing transaction:`, error)
+      } catch (error: any) {
+        console.error(`❌ Error processing transaction:`, error.message)
+        if (error.code) console.error(`   Prisma error code: ${error.code}`)
       }
     }
 
     console.log(`\n✅ TON sync complete!`)
     console.log(`   New swaps: ${newSwaps}`)
     console.log(`   Skipped (duplicates): ${skippedSwaps}`)
+    console.log(`   Skipped (no hash): ${skippedNoHash}`)
 
   } catch (error: any) {
     if (error.response) {

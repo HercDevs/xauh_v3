@@ -22,6 +22,7 @@ export async function GET() {
         },
         select: {
           sessionId: true,
+          hostname: true,
         },
       }),
       prisma.clickout.count(),
@@ -42,7 +43,7 @@ export async function GET() {
     const uniqueSessions = new Map<string, string>()
     allWebEvents.forEach(event => {
       if (!uniqueSessions.has(event.sessionId)) {
-        const hostname = 'unknown'
+        const hostname = event.hostname || 'unknown'
         uniqueSessions.set(event.sessionId, hostname)
       }
     })
@@ -52,6 +53,7 @@ export async function GET() {
       'xauh.gold': 0,
       'herculis.gold': 0,
       'herculis.li': 0,
+      'herculis.ch': 0,
       'Other': 0,
     }
 
@@ -62,6 +64,8 @@ export async function GET() {
         sessionsByWebsite['herculis.gold']++
       } else if (hostname.includes('herculis.li')) {
         sessionsByWebsite['herculis.li']++
+      } else if (hostname.includes('herculis.ch')) {
+        sessionsByWebsite['herculis.ch']++
       } else {
         sessionsByWebsite['Other']++
       }
