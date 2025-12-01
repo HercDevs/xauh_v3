@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAUH Tracking Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 XAUH Analytics Tracking Test</h1>
+
+    <div class="test-box">
+        <h2>Test Configuration</h2>
+        <label>
+            Dashboard URL:
+            <input type="text" id="dashboardUrl" value="https://xauh-dashboard-v2.vercel.app" style="width: 400px;">
+        </label>
+        <br><br>
+        <label>
+            Simulate Hostname:
+            <select id="hostnameSelect">
+                <option value="xauh.gold">xauh.gold</option>
+                <option value="herculis.gold">herculis.gold</option>
+                <option value="herculis.li">herculis.li</option>
+                <option value="herculis.ch">herculis.ch</option>
+                <option value="test.example.com">test.example.com (Other)</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="test-box">
+        <h2>Test 1: Page View Event</h2>
+        <p>Send a page_view event to test if the dashboard receives it with correct hostname.</p>
+        <button onclick="testPageView()">Send Page View</button>
+        <div id="pageViewResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Test 2: DEX Clickout Event</h2>
+        <p>Send a dex_clickout event to test if clickouts are tracked with hostname.</p>
+        <button onclick="testClickout()">Send Clickout</button>
+        <div id="clickoutResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>Test 3: Check Latest Data</h2>
+        <p>Fetch recent events from the dashboard to verify they were received.</p>
+        <button onclick="checkData()">Check Latest Events</button>
+        <div id="dataResult"></div>
+    </div>
+
+    <script>
+        function getSessionId() {
+            let sessionId = localStorage.getItem('xauh_session_id');
+            if (!sessionId) {
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(7);
+                localStorage.setItem('xauh_session_id', sessionId);
+            }
+            return sessionId;
+        }
+
+        async function testPageView() {
+            const dashboardUrl = document.getElementById('dashboardUrl').value;
+            const hostname = document.getElementById('hostnameSelect').value;
+            const resultDiv = document.getElementById('pageViewResult');
+
+            resultDiv.innerHTML = '<div class="status info">Sending page_view event...</div>';
+
+            const payload = {
+                sessionId: getSessionId(),
+                eventType: 'page_view',
+                path: '/test-page',
+                referrer: 'https://google.com',
+                hostname: hostname,
+                utmSource: 'test',
+                utmMedium: 'tracking-test',
+                utmCampaign: 'verification'
+            };
+
+            try {
+                const response = await fetch(`${dashboardUrl}/api/collect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Page view sent successfully!</div>
+                        <pre>${JSON.stringify(payload, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Failed: ${response.status} ${response.statusText}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">❌ Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        async function testClickout() {
+            const dashboardUrl = document.getElementById('dashboardUrl').value;
+            const hostname = document.getElementById('hostnameSelect').value;
+            const resultDiv = document.getElementById('clickoutResult');
+
+            resultDiv.innerHTML = '<div class="status info">Sending dex_clickout event...</div>';
+
+            const payload = {
+                sessionId: getSessionId(),
+                eventType: 'dex_clickout',
+                hostname: hostname,
+                href: 'https://app.ston.fi/swap?chartVisible=false&ft=TON&tt=XAUH',
+                utmSource: 'test',
+                utmMedium: 'tracking-test',
+                utmCampaign: 'verification'
+            };
+
+            try {
+                const response = await fetch(`${dashboardUrl}/api/collect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Clickout sent successfully!</div>
+                        <pre>${JSON.stringify(payload, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Failed: ${response.status} ${response.statusText}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">❌ Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        async function checkData() {
+            const dashboardUrl = document.getElementById('dashboardUrl').value;
+            const resultDiv = document.getElementById('dataResult');
+
+            resultDiv.innerHTML = '<div class="status info">Fetching latest stats...</div>';
+
+            try {
+                const response = await fetch(`${dashboardUrl}/api/stats`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Data fetched successfully!</div>
+                        <h3>Website Sessions Breakdown:</h3>
+                        <pre>${JSON.stringify(data.sessionsByWebsite, null, 2)}</pre>
+                        <h3>Overall Stats:</h3>
+                        <ul>
+                            <li>Total Sessions: ${data.sessions}</li>
+                            <li>Total Clickouts: ${data.clickouts}</li>
+                            <li>Total Swaps: ${data.swaps}</li>
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="status error">❌ Failed: ${response.status}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="status error">❌ Error: ${error.message}</div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

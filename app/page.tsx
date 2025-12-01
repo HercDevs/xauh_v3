@@ -75,13 +75,24 @@ export default function Dashboard() {
     <div className="min-h-screen p-8" style={{ backgroundColor: '#0f1e33' }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2" style={{ color: '#d4af37' }}>
-            Herculis Gold Coin Analytics
-          </h1>
-          <p className="text-lg" style={{ color: '#b8965f' }}>
-            Track social media → website → DEX swap conversions
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: '#d4af37' }}>
+              Herculis Gold Coin Analytics
+            </h1>
+            <p className="text-lg" style={{ color: '#b8965f' }}>
+              Track social media → website → DEX swap conversions
+            </p>
+          </div>
+          <div>
+            <a
+              href="/clickouts"
+              className="px-4 py-2 rounded font-medium hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: '#d4af37', color: '#0a1628' }}
+            >
+              View Clickouts by Website →
+            </a>
+          </div>
         </div>
 
         {/* KPI Cards */}

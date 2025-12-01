@@ -8,7 +8,10 @@
       "Bash(python -m json.tool:*)",
       "Bash(npx prisma db push)",
       "Bash(npm run build:*)",
-      "Bash(timeout 60 npm run build)"
+      "Bash(timeout 60 npm run build)",
+      "Bash(psql:*)",
+      "Bash(timeout 15 npx tsx:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

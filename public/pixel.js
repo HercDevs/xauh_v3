@@ -130,6 +130,7 @@ function trackPageView() {
           sessionId,
           eventType: 'dex_clickout',
           path: window.location.pathname,
+          hostname: window.location.hostname,
           href,
           elementId: target.id || undefined,
           label: target.textContent?.trim() || undefined,

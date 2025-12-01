@@ -44,3 +44,4 @@ prisma/migrations
 *MIGRATION*.md
 *EXPORT*.md
 *VERCEL_ENV*.txt
+*.md
