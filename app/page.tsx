@@ -315,13 +315,16 @@ function VolumeCard({
       }}
     >
       <div className="text-sm font-medium opacity-75 mb-1" style={{ color: '#d4af37' }}>
-        Volume
+        Volume (Cumulative)
       </div>
       <div className="text-2xl font-bold mb-1" style={{ color: '#d4af37' }}>
         ${usd.toLocaleString(undefined, { maximumFractionDigits: 0 })}
       </div>
       <div className="text-lg font-semibold" style={{ color: '#b8965f' }}>
         {coins.toLocaleString(undefined, { maximumFractionDigits: 2 })} XAUH
+      </div>
+      <div className="text-xs opacity-60 mt-1" style={{ color: '#b8965f' }}>
+        Total traded over time
       </div>
     </div>
   )
