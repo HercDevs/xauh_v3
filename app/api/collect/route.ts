@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         sessionId,
         eventType,
         path: path || null,
+        hostname: hostname || null,
         referrer: referrer || null,
         utmSource: utmSource || null,
         utmMedium: utmMedium || null,
