@@ -142,7 +142,7 @@ function trackPageView() {
     });
   }
 
-  // Initialize tracking
+  // Initialise tracking
   function init() {
     // Track initial page view
     if (document.readyState === 'loading') {

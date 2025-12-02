@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret (prevents unauthorized access)
+    // Verify cron secret
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
     

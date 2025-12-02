@@ -62,7 +62,7 @@ export async function GET() {
     // Aggregate by day
     const dailyData: Record<string, any> = {}
 
-    // Initialize all days with zeros
+    // Initialise all days with zeros
     for (let i = 0; i < 30; i++) {
       const date = format(subDays(now, i), 'yyyy-MM-dd')
       dailyData[date] = {

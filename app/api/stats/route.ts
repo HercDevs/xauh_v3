@@ -52,7 +52,7 @@ export async function GET() {
       }
     })
   
-    // Categorize sessions by website based on hostname
+    // Categorise sessions by website based on hostname
     const sessionsByWebsite: Record<string, number> = {
       'xauh.gold': 0,
       'herculis.gold': 0,

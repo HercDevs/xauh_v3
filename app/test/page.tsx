@@ -121,7 +121,7 @@ export default function TestPage() {
       });
     }
 
-    // Initialize
+    // Initialise
     trackPageView();
     trackDexClickouts();
 

@@ -18,17 +18,7 @@ export async function GET(request: NextRequest) {
 
     console.log('🔄 Starting Telegram sync...')
 
-    // NOTE: Telegram sync via API requires session management which is complex
-    // in serverless environments. For now, this returns a placeholder.
-    // You would need to:
-    // 1. Store the Telegram session string in your database
-    // 2. Reuse it on each sync
-    // 3. Handle session expiry
-    
-    // For a production system, consider:
-    // - Using Telegram Bot API instead (simpler but different data)
-    // - Running a separate long-lived process for Telegram client
-    // - Using a service like n8n or Zapier for Telegram automation
+    // NOTE: placeholder
 
     return NextResponse.json({
       success: true,

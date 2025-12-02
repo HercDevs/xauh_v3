@@ -39,11 +39,6 @@ prisma/migrations
 # Temporary documentation
 *.env.backup
 *.env.new
-*TRANSFER*.md
-*TRANSFER*.txt
-*MIGRATION*.md
-*EXPORT*.md
-*VERCEL_ENV*.txt
 *.md
 ¨
 # Claude folder
