@@ -43,3 +43,6 @@ prisma/migrations
 ¨
 # Claude folder
 .claude/.claude/
+
+# Markdowns
+*.md
