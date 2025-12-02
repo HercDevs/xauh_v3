@@ -9,6 +9,8 @@ export async function GET() {
     // Get overall KPIs
     const [
       totalPosts,
+      xPosts,
+      telegramPosts,
       allWebEvents,
       totalClickouts,
       totalSwaps,
@@ -16,6 +18,8 @@ export async function GET() {
       coinVolumeData,
     ] = await Promise.all([
       prisma.post.count(),
+      prisma.post.count({ where: { channel: 'X' } }),
+      prisma.post.count({ where: { channel: 'TG' } }),
       prisma.rawWebEvent.findMany({
         where: {
           eventType: 'page_view',
@@ -88,6 +92,8 @@ export async function GET() {
 
     return NextResponse.json({
       posts: totalPosts,
+      xPosts,
+      telegramPosts,
       sessions: totalSessions,
       clickouts: totalClickouts,
       swaps: totalSwaps,

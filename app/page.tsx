@@ -5,6 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 interface Stats {
   posts: number
+  xPosts: number
+  telegramPosts: number
   sessions: number
   clickouts: number
   swaps: number
@@ -104,11 +106,9 @@ export default function Dashboard() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <KPICard
-            title="Posts"
-            value={stats.posts}
-            subtitle="X + Telegram"
-            variant="primary"
+          <PostsCard
+            xPosts={stats.xPosts}
+            telegramPosts={stats.telegramPosts}
           />
           <SessionsCard
             total={stats.sessions}
@@ -273,19 +273,55 @@ function KPICard({
   )
 }
 
-function SessionsCard({ 
-  total, 
-  breakdown 
-}: { 
+function PostsCard({
+  xPosts,
+  telegramPosts
+}: {
+  xPosts: number
+  telegramPosts: number
+}) {
+  const total = xPosts + telegramPosts
+  return (
+    <div
+      className="border-2 rounded-lg p-6"
+      style={{
+        backgroundColor: '#1a2942',
+        borderColor: '#2a4a7c'
+      }}
+    >
+      <div className="text-sm font-medium opacity-75 mb-1" style={{ color: '#d4af37' }}>
+        Posts
+      </div>
+      <div className="text-3xl font-bold mb-2" style={{ color: '#d4af37' }}>
+        {total}
+      </div>
+      <div className="text-xs space-y-1" style={{ color: '#d4af37' }}>
+        <div className="flex justify-between">
+          <span className="opacity-75">X:</span>
+          <span className="font-semibold">{xPosts}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="opacity-75">Telegram:</span>
+          <span className="font-semibold">{telegramPosts}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SessionsCard({
+  total,
+  breakdown
+}: {
   total: number
   breakdown: Record<string, number>
 }) {
   return (
-    <div 
+    <div
       className="border-2 rounded-lg p-6"
-      style={{ 
-        backgroundColor: '#1a2942', 
-        borderColor: '#2a4a7c' 
+      style={{
+        backgroundColor: '#1a2942',
+        borderColor: '#2a4a7c'
       }}
     >
       <div className="text-sm font-medium opacity-75 mb-1" style={{ color: '#b8965f' }}>
