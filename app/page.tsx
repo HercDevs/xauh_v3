@@ -76,10 +76,17 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8 flex justify-between items-center">
-          <div>
+          <div className="flex items-center gap-4">
             <h1 className="text-4xl font-bold mb-2" style={{ color: '#d4af37' }}>
               Herculis Gold Coin Analytics
             </h1>
+            <img
+              src="/logo_whitebk.png"
+              alt="Herculis Logo"
+              className="h-12 w-auto"
+            />
+          </div>
+          <div>
             <p className="text-lg" style={{ color: '#b8965f' }}>
               Track social media → website → DEX swap conversions
             </p>
