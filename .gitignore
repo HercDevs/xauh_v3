@@ -45,3 +45,6 @@ prisma/migrations
 *EXPORT*.md
 *VERCEL_ENV*.txt
 *.md
+¨
+# Claude folder
+.claude/.claude/
