@@ -72,10 +72,13 @@ export async function GET(request: NextRequest) {
         continue
       }
 
+      // Extract XAUH token amount from jetton_transfer in outgoing messages
       let amountOut = 0
       for (const outMsg of outMsgs) {
-        if (outMsg.destination?.address === wallet) {
-          amountOut = parseFloat(outMsg.value || '0') / 1e9
+        if (outMsg.decoded_op_name === 'jetton_transfer' && outMsg.decoded_body?.amount) {
+          // Jetton amounts use very large integers - divide by 1e18 for proper decimals
+          amountOut = parseFloat(outMsg.decoded_body.amount) / 1e18
+          break
         }
       }
 
