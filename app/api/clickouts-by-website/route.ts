@@ -51,7 +51,7 @@ export async function GET() {
     return NextResponse.json({
       total: clickouts.length,
       byWebsite: clickoutsByWebsite,
-      recentClickouts: clickouts.slice(0, 20).map(c => ({
+      recentClickouts: clickouts.map(c => ({
         id: c.clickId,
         website: c.hostname || 'unknown',
         dest: c.dest,

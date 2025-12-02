@@ -21,6 +21,8 @@ interface ClickoutData {
 export default function ClickoutsPage() {
   const [data, setData] = useState<ClickoutData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 50
 
   useEffect(() => {
     fetch('/api/clickouts-by-website')
@@ -78,8 +80,27 @@ export default function ClickoutsPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold">Recent Clickouts</h2>
+          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-xl font-bold">All Clickouts ({data.recentClickouts.length})</h2>
+            <div className="flex gap-2 items-center">
+              <span className="text-sm text-gray-600">
+                Page {currentPage} of {Math.ceil(data.recentClickouts.length / itemsPerPage)}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(Math.ceil(data.recentClickouts.length / itemsPerPage), p + 1))}
+                disabled={currentPage === Math.ceil(data.recentClickouts.length / itemsPerPage)}
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200"
+              >
+                Next
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -89,11 +110,14 @@ export default function ClickoutsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Website</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">UTM Source</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">UTM Campaign</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {data.recentClickouts.map((clickout) => (
+                {data.recentClickouts
+                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((clickout) => (
                   <tr key={clickout.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs rounded ${
@@ -106,16 +130,19 @@ export default function ClickoutsPage() {
                         {clickout.website}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      <a href={clickout.dest} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                        {clickout.dest.substring(0, 50)}...
+                    <td className="px-6 py-4 text-sm text-gray-900 max-w-md">
+                      <a href={clickout.dest} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                        {clickout.dest}
                       </a>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {clickout.utm.source || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(clickout.createdAt).toLocaleDateString()}
+                      {clickout.utm.campaign || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(clickout.createdAt).toLocaleString()}
                     </td>
                   </tr>
                 ))}
