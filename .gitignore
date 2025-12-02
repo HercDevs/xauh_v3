@@ -45,4 +45,4 @@ prisma/migrations
 .claude/.claude/
 
 # Markdowns
-*.md
+*.md*.md
