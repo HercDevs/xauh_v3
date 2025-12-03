@@ -8,9 +8,10 @@ const prisma = new PrismaClient()
 const apiId = parseInt(process.env.TELEGRAM_API_ID || '0')
 const apiHash = process.env.TELEGRAM_API_HASH || ''
 const channelUsername = process.env.TELEGRAM_CHANNEL || ''
+const sessionString = process.env.TELEGRAM_SESSION_STRING || ''
 
-// StringSession stores your login - will be empty first time
-const stringSession = new StringSession('')
+// StringSession stores your login
+const stringSession = new StringSession(sessionString)
 
 async function syncTelegramMessages() {
   console.log('🔄 Starting Telegram sync...')
